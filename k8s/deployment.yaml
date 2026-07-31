@@ -1,0 +1,50 @@
+# new-app Deployment — CORRECTED (Hans / Kubernetes)
+
+# Fixes applied vs. the broken live object:
+#   Fix1  image:            localhost:5050/new-app:1.0  ->  192.168.10.23:5000/new-app:1.0
+#   Fix2  liveness path:    /healthz                    ->  /health
+#   Fix3  port:             standardized on 3001 everywhere (app's default) incl. probes
+
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: new-app
+  namespace: startup
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: new-app                     # matches template labels below (valid)
+  template:
+    metadata:
+      labels:
+        app: new-app
+    spec:
+      containers:
+      - name: new-app
+        image: 192.168.10.23:5000/new-app:1.0   # host the k3s mirror + port 5000 + real tag
+        imagePullPolicy: IfNotPresent
+        ports:
+        - containerPort: 3001
+        env:
+        - name: PORT
+          value: "3001"
+        resources:                       
+          requests:
+            cpu: 100m
+            memory: 20Mi
+          limits:
+            cpu: 100m
+            memory: 20Mi                 
+        livenessProbe:
+          httpGet:
+            path: /health               # app serves /health, NOT /healthz
+            port: 3001                   # must match containerPort/PORT (app listens on 3001)
+          initialDelaySeconds: 5
+          periodSeconds: 10
+        readinessProbe:
+          httpGet:
+            path: /health
+            port: 3001                   #match the container port
+          initialDelaySeconds: 3
+          periodSeconds: 10

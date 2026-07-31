@@ -1,0 +1,17 @@
+# new-app Service — CORRECTED (Hans / Kubernetes)
+# Fix applied vs. the broken live object:
+# app=task-manager  ->  app=new-app   (so the Service actually finds the pods)
+
+apiVersion: v1
+kind: Service
+metadata:
+  name: new-app-svc
+  namespace: startup
+spec:
+  type: NodePort
+  selector:
+    app: new-app          # was app: task-manager -> matched zero pods -> zero endpoints
+  ports:
+  - port: 80              # port inside the cluster
+    targetPort: 3001      # container port (matches Deployment containerPort / PORT env)
+    nodePort: 30091       # external port on every node: http://<nodeIP>:30091
