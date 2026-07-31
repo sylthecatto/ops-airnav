@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Task Manager - Startup Tech Co.</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+      background: linear-gradient(135deg, #0B2335 0%, #1a3a5c 100%);
+      color: #fff;
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 2em;
+    }
+    .card {
+      background: rgba(255,255,255,0.05);
+      border: 1px solid rgba(255,255,255,0.1);
+      border-radius: 16px;
+      padding: 2.5em;
+      max-width: 480px;
+      width: 100%;
+    }
+    h1 { font-size: 1.6em; margin-bottom: 0.2em; }
+    p.subtitle { color: #9fb3c8; margin-bottom: 1.5em; font-size: 0.9em; }
+    .task-form {
+      display: flex;
+      gap: 0.5em;
+      margin-bottom: 1.5em;
+    }
+    input {
+      flex: 1;
+      padding: 0.6em;
+      border-radius: 8px;
+      border: 1px solid rgba(255,255,255,0.2);
+      background: rgba(0,0,0,0.2);
+      color: #fff;
+    }
+    button {
+      padding: 0.6em 1.2em;
+      border-radius: 8px;
+      border: none;
+      background: #2ecc71;
+      color: #0B2335;
+      font-weight: bold;
+      cursor: pointer;
+    }
+    .task {
+      display: flex;
+      align-items: center;
+      gap: 0.6em;
+      padding: 0.6em 0;
+      border-bottom: 1px solid rgba(255,255,255,0.05);
+    }
+    .task.done span { text-decoration: line-through; color: #7f93a8; }
+    .task input[type="checkbox"] { width: 18px; height: 18px; }
+  </style>
+</head>
+<body>
+  <div class="card">
+    <h1>Task Manager</h1>
+    <p class="subtitle">Startup Tech Co. - Internal Tool</p>
+    <div class="task-form">
+      <input type="text" id="newTask" placeholder="Add a new task...">
+      <button onclick="addTask()">Add</button>
+    </div>
+    <div id="taskList"></div>
+  </div>
+
+  <script>
+    async function loadTasks() {
+      const res = await fetch('/api/tasks');
+      const tasks = await res.json();
+      const list = document.getElementById('taskList');
+      list.innerHTML = tasks.map(t => `
+        <div class="task ${t.done ? 'done' : ''}">
+          <input type="checkbox" ${t.done ? 'checked' : ''} onchange="toggleTask(${t.id})">
+          <span>${t.title}</span>
+        </div>
+      `).join('');
+    }
+
+    async function addTask() {
+      const input = document.getElementById('newTask');
+      if (!input.value.trim()) return;
+      await fetch('/api/tasks', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ title: input.value })
+      });
+      input.value = '';
+      loadTasks();
+    }
+
+    async function toggleTask(id) {
+      await fetch(`/api/tasks/${id}`, { method: 'PUT' });
+      loadTasks();
+    }
+
+    loadTasks();
+  </script>
+</body>
+</html>
