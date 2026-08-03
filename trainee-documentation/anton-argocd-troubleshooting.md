@@ -104,9 +104,11 @@ kubectl -n argocd get applications -o wide
 ```
 
 ```
-NAME               SYNC STATUS   HEALTH STATUS   REVISION                                     PROJECT
-new-app-prod       Synced        Degraded        9ad654e32b52d1a3d1fdf8d78e336b759e33e3e5     default
-new-app-staging    Synced        Progressing     52dd7e99d1340152a9a728de657e8787c4d34b90     default
+[root@node20 ~]# kubectl -n argocd get applications -o wide
+NAME              SYNC STATUS   HEALTH STATUS   REVISION                                   PROJECT
+new-app-prod      Synced        Healthy         c8e3f149c88865a1c56d791844d927e886616996   default
+new-app-staging   Synced        Healthy         30550ca73cd84651e3c41b0eee526cf83208c13f   default
+
 ```
 
 **Note:** sync mechanism is working (both apps moved off `Unknown`/`ComparisonError`), but neither is yet `Synced, Healthy`. `new-app-prod` is `Degraded` and `new-app-staging` is `Progressing` — consistent with the Section 6 dependency on the image not being ready yet. This step confirms the GitOps source fix worked; it does not by itself confirm the app is healthy.
