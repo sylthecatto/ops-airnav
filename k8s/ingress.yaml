@@ -1,0 +1,21 @@
+# new-app Ingress — routes new-app.production.local to new-app-svc via Traefik
+# Requires a hosts-file entry on your machine pointing new-app.production.local
+# at a node IP (e.g. 192.168.8.121), same as the existing myapp.local example.
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: new-app-ingress
+  namespace: startup-prod
+spec:
+  ingressClassName: traefik
+  rules:
+  - host: new-app.production.local
+    http:
+      paths:
+      - path: /
+        pathType: Prefix
+        backend:
+          service:
+            name: new-app-svc
+            port:
+              number: 80
