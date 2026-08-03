@@ -1,6 +1,6 @@
-# new-app Ingress — routes new-app.production.local to new-app-svc via Traefik
-# Requires a hosts-file entry on your machine pointing new-app.production.local
-# at a node IP (e.g. 192.168.8.121), same as the existing myapp.local example.
+# new-app Ingress — routes new-app-prod.192.168.8.121.nip.io to new-app-svc via Traefik
+# nip.io is public wildcard DNS that resolves <anything>.<IP>.nip.io -> <IP> automatically.
+# No hosts-file edits needed on any machine - works for anyone on the network with normal DNS.
 apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:
@@ -9,7 +9,7 @@ metadata:
 spec:
   ingressClassName: traefik
   rules:
-  - host: new-app.production.local
+  - host: new-app-prod.192.168.8.121.nip.io
     http:
       paths:
       - path: /
