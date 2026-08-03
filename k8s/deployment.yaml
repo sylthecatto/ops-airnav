@@ -22,7 +22,7 @@ spec:
     spec:
       containers:
       - name: new-app
-        image: 192.168.10.23:5000/new-app:1.0   # host the k3s mirror + port 5000 + real tag
+        image: 192.168.10.23:5000/new-app:v1.0.0
         imagePullPolicy: IfNotPresent
         ports:
         - containerPort: 3001
