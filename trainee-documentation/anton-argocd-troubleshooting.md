@@ -111,7 +111,7 @@ new-app-staging   Synced        Healthy         30550ca73cd84651e3c41b0eee526cf8
 
 ```
 
-**Note:** sync mechanism is working (both apps moved off `Unknown`/`ComparisonError`), but neither is yet `Synced, Healthy`. `new-app-prod` is `Degraded` and `new-app-staging` is `Progressing` — consistent with the Section 6 dependency on the image not being ready yet. This step confirms the GitOps source fix worked; it does not by itself confirm the app is healthy.
+Confirmed: both apps are Synced and Healthy — full resolution. The earlier Degraded/Progressing readings (seen right after the initial sync) have cleared now that the image/registry dependencies (Section 6) were in place.
 
 ```
 kubectl -n argocd get application new-app-staging -o jsonpath='{.status.conditions}'
