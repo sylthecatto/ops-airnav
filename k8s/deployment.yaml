@@ -9,7 +9,7 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: new-app
-  namespace: startup
+  namespace: startup-prod
 spec:
   replicas: 2
   selector:
